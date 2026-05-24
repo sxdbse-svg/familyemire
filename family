@@ -1,0 +1,383 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ShieldCheck, Cpu, CreditCard, DollarSign, ArrowUpRight, Clock, Disc, Volume2, Lock, Unlock, 
+  Tv, Monitor, Palette, Heart, MessageSquare, Users, UserCheck, Sparkles, X, Package, 
+  ShoppingBag, CheckSquare, Square, Scale, FileText, Play, RefreshCw, ChevronRight, CheckCircle2, ArrowDownRight, TrendingUp
+} from 'lucide-react';
+
+// ==========================================
+// CENTRAL STATIC APPLICATION DATA MANIFESTS
+// ==========================================
+const SECURITY_QUESTIONS_POOL = [
+  { id: "q1", question: "The absolute exact street address of your earliest childhood memory anchor?" },
+  { id: "q2", question: "The full name of the first individual who ever broke your trust?" },
+  { id: "q3", question: "A 6-digit numeric date of historical personal significance known only to your immediate family?" },
+  { id: "q4", question: "The model number or exact brand of the first digital screen you owned?" },
+  { id: "q5", question: "The naming convention or alias you use when testing private internal file environments?" }
+];
+
+const MOVIE_TV_CATALOG = [
+  { id: "mov_1", title: "Suicide Mob - Scene 2 Breakdown", duration: 8, basePrice: 0.00 },
+  { id: "mov_2", title: "Indie Cinema: Under the Surface", duration: 15, basePrice: 0.25 },
+  { id: "mov_3", title: "Documentary: The Shadow Economy", duration: 30, basePrice: 0.50 },
+  { id: "mov_4", title: "Feature Film: Midnight Run", duration: 60, basePrice: 1.00 }
+];
+
+const DRIP_GALLERY_COLLECTION = [
+  { id: "art_1", title: "Suicide Mob Original Storyboards", category: "Production Concept", isPremium: false, price: 0.00, url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=400&q=80" },
+  { id: "art_2", title: "Dada Character Design Matte Painting", category: "Premium Masterpiece", isPremium: true, customPrice: 1.75, url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80" }
+];
+
+const CHOSEN_PROFILES = [
+  { id: "match_1", alias: "Luciana_Designz", age: 26, role: "Film Editor / DRIP Curator", matchReason: "High synergy with Suicide Mob Script elements", premiumFee: 0.50, url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" },
+  { id: "match_2", alias: "Vandal_Beatz_99", age: 29, role: "Audio Engineer / Studio Lead", matchReason: "Frequent listener of UNDAGROUND MUSIK Node 04", premiumFee: 0.25, url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" }
+];
+
+const MARKETPLACE_PRODUCTS = [
+  { id: "prod_1", title: "DANGEROUS LABZ Mastering EQ Hardware", price: 349.99, category: "Hardware Gear", url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=300&q=80" },
+  { id: "prod_2", title: "Suicide Mob Softstyle Production Hoodie", price: 55.00, category: "Apparel", url: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=300&q=80" }
+];
+
+const AUDIO_FEED_CATALOG = [
+  { id: "track_1", title: "Suicide Mob Official Theme - Dada Mix", artist: "Ardvark", duration: "3:45", isEncrypted: true },
+  { id: "track_2", title: "Dangerous Labz Studio Session Raw Master", artist: "Lucky Luciana", duration: "5:12", isEncrypted: true }
+];
+
+const INITIAL_DEBT_ACCOUNTS = [
+  { id: "deb_1", collector: "Apex Collections Bureau", accountType: "Collection", itemUnderDispute: "COLLECTION_ACCOUNT_01", amount: 1250.00, status: "UNRESOLVED", selected: false },
+  { id: "deb_2", collector: "Legacy FinTech Group", accountType: "Late Payment Link", itemUnderDispute: "LATE_PAYMENT_MARCH_25", amount: 450.00, status: "PENDING_BUREAU_RESPONSE", selected: false }
+];
+
+const INITIAL_STOCK_LISTING_INDEX = [
+  { id: "stk_1", assetTicker: "SUICIDE_MOB", name: "Suicide Mob Media IP Network", currentValuation: 45.25, percentageChange: 12.4, isBullish: true },
+  { id: "stk_2", assetTicker: "LABZ_STUDIOS", name: "Dangerous Labz Physical Infrastructures", currentValuation: 112.10, percentageChange: -4.8, isBullish: false }
+];
+
+// ==========================================
+// CORE INTEGRATED WEB APP ROOT ENGINE
+// ==========================================
+export default function App() {
+  const [activeTab, setActiveTab] = useState("SECURITY");
+  const [isIdentityVerified, setIsIdentityVerified] = useState(false);
+
+  // Synchronized Global Portfolio Balance Ledger Matrix
+  const [balances, setBalances] = useState({
+    internalPortfolio: 250.00,
+    brandedDebitCard: 750.50,
+    unsettledEscrow: 120.00,
+    stockEquity: 4500.00
+  });
+
+  // State Management Hooks across distinct interfaces
+  const [totpInput, setTotpInput] = useState("");
+  const [securityAnswers, setSecurityAnswers] = useState({ q1: "", q2: "", q3: "", q4: "", q5: "" });
+  const [securityStep, setSecurityStep] = useState("KEY_1");
+  const [activeVideo, setActiveVideo] = useState(MOVIE_TV_CATALOG[0]);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [unlockedVideoIds, setUnlockedVideoIds] = useState({});
+  const [hasPaidDripCover, setHasPaidDripCover] = useState(false);
+  const [selectedDripArt, setSelectedDripArt] = useState(null);
+  const [unlockedDripArtIds, setUnlockedDripArtIds] = useState({});
+  const [chosenIndex, setChosenIndex] = useState(0);
+  const [activeChosenChats, setActiveChosenChats] = useState([]);
+  const [marketplaceCart, setMarketplaceCart] = useState([]);
+  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState("INTERNAL_ACCOUNT");
+
+  // Boom Box States
+  const [currentTrack, setCurrentTrack] = useState(AUDIO_FEED_CATALOG[0]);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [studioTimeLeft, setStudioTimeLeft] = useState(180);
+  const [decryptionKey, setDecryptionKey] = useState("");
+  const [isDecrypted, setIsDecrypted] = useState(false);
+
+  // Stock Market States
+  const [marketAssets, setMarketAssets] = useState(INITIAL_STOCK_LISTING_INDEX);
+  const [activeAsset, setActiveAsset] = useState(INITIAL_STOCK_LISTING_INDEX[0]);
+  const [tradeQuantity, setTradeQuantity] = useState(10);
+
+  // Credit Repair States
+  const [accounts, setAccounts] = useState(INITIAL_DEBT_ACCOUNTS);
+  const [selectedOptions, setSelectedOptions] = useState({ optA: false, optB: false, optC1: false, optC2: false, optC3: false });
+  const [isProcessingCredit, setIsProcessingCredit] = useState(false);
+  const [creditLog, setCreditLog] = useState([]);
+
+  // Audio Session Countdown System Loop
+  useEffect(() => {
+    let timer;
+    if (isAudioPlaying && studioTimeLeft > 0) {
+      timer = setInterval(() => setStudioTimeLeft(prev => prev - 1), 1000);
+    } else if (studioTimeLeft === 0) {
+      setIsAudioPlaying(false);
+    }
+    return () => clearInterval(timer);
+  }, [isAudioPlaying, studioTimeLeft]);
+
+  const navigateToTab = (tabId) => {
+    if (!isIdentityVerified && tabId !== "SECURITY") {
+      alert("ACCESS FAULT: Authenticated double-key verification clearance required to open this segment.");
+      setActiveTab("SECURITY");
+    } else {
+      setActiveTab(tabId);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-neutral-300 font-mono flex flex-col justify-between selection:bg-neutral-800">
+      
+      {/* APP BAR HEADER GLOBAL METRICS */}
+      <header className="bg-neutral-950 border-b-2 border-neutral-900 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div>
+          <h1 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2">
+            WhereJewelzRfound.com <span className="text-[10px] bg-neutral-900 px-1.5 py-0.5 border border-neutral-800 text-neutral-500 font-mono">SANDBOX_BUILD_v3</span>
+          </h1>
+          <p className="text-[10px] text-neutral-600 uppercase font-bold mt-0.5">Unified System Environment Deployment Package</p>
+        </div>
+        <div className="flex gap-2 items-center text-[10px] font-black">
+          <span className={`px-2 py-0.5 border rounded-sm flex items-center gap-1 ${isIdentityVerified ? 'bg-emerald-950/50 text-emerald-400 border-emerald-900' : 'bg-red-950/50 text-red-500 border-red-900 animate-pulse'}`}>
+            {isIdentityVerified ? 'SESSION AUTHORIZED' : 'SECURE LOG ON REQUIRED'}
+          </span>
+        </div>
+      </header>
+
+      {/* CORE RUNTIME INTERFACE TABS CONTROLLER */}
+      <nav className="bg-neutral-950/60 border-b border-neutral-900 grid grid-cols-3 sm:grid-cols-7 text-center text-[9px] font-black uppercase tracking-tight">
+        <button onClick={() => setActiveTab("SECURITY")} className={`py-3 border-r border-neutral-900 ${activeTab === 'SECURITY' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>Security</button>
+        <button onClick={() => navigateToTab("FINANCIAL")} className={`py-3 border-r border-neutral-900 ${activeTab === 'FINANCIAL' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>WJRF Card</button>
+        <button onClick={() => navigateToTab("BOOMBOX")} className={`py-3 border-r border-neutral-900 ${activeTab === 'BOOMBOX' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>Boom Box</button>
+        <button onClick={() => navigateToTab("TV_STREAMING")} className={`py-3 border-r border-neutral-900 ${activeTab === 'TV_STREAMING' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>TakeOver TV</button>
+        <button onClick={() => navigateToTab("DRIP_GALLERY")} className={`py-3 border-r border-neutral-900 ${activeTab === 'DRIP_GALLERY' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>Drip Spaces</button>
+        <button onClick={() => navigateToTab("CHOSEN_DATING")} className={`py-3 border-r border-neutral-900 ${activeTab === 'CHOSEN_DATING' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>Chosen</button>
+        <button onClick={() => navigateToTab("MARKETPLACE")} className={`py-3 border-r border-neutral-900 ${activeTab === 'MARKETPLACE' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>Market</button>
+        <button onClick={() => navigateToTab("CREDIT_REPAIR")} className={`py-3 ${activeTab === 'CREDIT_REPAIR' ? 'bg-neutral-900 text-white border-b border-white' : 'text-neutral-500'}`}>Credit Optimization</button>
+      </nav>
+
+      {/* CORE DISPLAY PORTS AREA */}
+      <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
+        
+        {/* TAB PORT: SECURITY CONFIGURATIONS */}
+        {activeTab === "SECURITY" && (
+          <div className="max-w-xl mx-auto border-2 border-neutral-900 bg-neutral-950 p-6 space-y-6">
+            <div className="border-b border-neutral-900 pb-3 text-center">
+              <Cpu className="w-8 h-8 text-red-500 mx-auto mb-2" />
+              <h2 className="text-xs font-black uppercase text-white tracking-widest">Two-Key Sandbox Identity Gateway Verification</h2>
+            </div>
+            {securityStep === "KEY_1" && (
+              <form onSubmit={(e)=>{e.preventDefault(); setSecurityStep("KEY_2");}} className="space-y-4">
+                <label className="text-[10px] font-black text-neutral-400 block uppercase">Factor 01/02: Sync Entry Code Token</label>
+                <input type="text" maxLength={6} placeholder="Enter any 6 digits (e.g. 123456)" value={totpInput} onChange={(e) => setTotpInput(e.target.value)} className="w-full bg-black border border-neutral-900 p-3 text-center text-xl font-black text-white focus:outline-none" />
+                <button type="submit" className="w-full bg-neutral-900 text-white font-black py-2.5 text-xs uppercase border border-neutral-800">Clear Initial Key Token</button>
+              </form>
+            )}
+            {securityStep === "KEY_2" && (
+              <form onSubmit={(e)=>{e.preventDefault(); setIsIdentityVerified(true); setSecurityStep("VERIFIED"); setActiveTab("FINANCIAL");}} className="space-y-3">
+                {SECURITY_QUESTIONS_POOL.map((q) => (
+                  <div key={q.id} className="bg-black border border-neutral-900 p-2 space-y-1">
+                    <label className="text-[9px] font-black uppercase text-neutral-500 block">{q.question}</label>
+                    <input type="password" placeholder="••••••••••••" value={securityAnswers[q.id]} onChange={(e)=>setSecurityAnswers({...securityAnswers, [q.id]: e.target.value})} className="w-full bg-neutral-950 border border-neutral-900 p-2 text-xs text-white focus:outline-none" required />
+                  </div>
+                ))}
+                <button type="submit" className="w-full bg-red-950/40 border border-red-900 text-red-400 font-black py-2.5 text-xs uppercase tracking-widest">Evaluate 5-Anchor Knowledge Array</button>
+              </form>
+            )}
+            {securityStep === "VERIFIED" && (
+              <div className="text-center py-6 space-y-2">
+                <ShieldCheck className="w-12 h-12 text-emerald-500 mx-auto" />
+                <h3 className="text-white font-black uppercase text-xs">Device Footprint Signed and Approved</h3>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB PORT: FINANCIAL MANAGEMENT MATRIX */}
+        {activeTab === "FINANCIAL" && (
+          <div className="max-w-md mx-auto bg-neutral-950 border-2 border-neutral-900 p-4 space-y-4">
+            <h3 className="text-white text-xs font-black uppercase tracking-wider pb-2 border-b border-neutral-900 flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-emerald-400" /> WJRF Corporate Card Control Node</h3>
+            <div className="w-full bg-gradient-to-br from-neutral-900 to-neutral-950 border-2 border-neutral-800 p-5 rounded-md shadow-2xl">
+              <span className="text-[8px] font-black text-emerald-400 block uppercase">LIQUID CARD NODE</span>
+              <div className="text-xl font-black text-white mt-1">${balances.brandedDebitCard.toFixed(2)}</div>
+              <div className="text-xs font-bold text-neutral-400 tracking-widest font-sans mt-4">••••  ••••  ••••  7192</div>
+            </div>
+            <div className="space-y-2 text-[11px] font-bold">
+              <div className="bg-black border border-neutral-900 p-2.5 flex justify-between items-center"><span className="text-neutral-500">Unallocated Ad Share Portfolio:</span><span className="text-white">${balances.internalPortfolio.toFixed(2)}</span></div>
+              <div className="bg-black border border-neutral-900 p-2.5 flex justify-between items-center"><span className="text-neutral-500">Pending Escrow Pool:</span><span className="text-yellow-500">${balances.unsettledEscrow.toFixed(2)}</span></div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB PORT: DANGEROUS LABZ BOOM BOX */}
+        {activeTab === "BOOMBOX" && (
+          <div className="max-w-md mx-auto bg-neutral-950 border border-neutral-900 p-4 space-y-3">
+            <div className="border-b border-neutral-900 pb-2 flex justify-between items-center bg-black p-2">
+              <div className="flex items-center gap-2"><Disc className={`w-5 h-5 text-amber-500 ${isAudioPlaying ? 'animate-spin' : ''}`} /><span className="font-black text-white text-[10px] tracking-widest">DANGEROUS LABZ BOOM BOX</span></div>
+              <div className="text-amber-400 text-[9px] font-black"><Clock className="w-3 h-3 inline mr-1" />{Math.floor(studioTimeLeft / 60)}m {studioTimeLeft % 60}s</div>
+            </div>
+            <div className="bg-black border border-neutral-900 p-4 text-center">
+              <div className="text-white font-black text-xs uppercase truncate">{currentTrack.title}</div>
+              {currentTrack.isEncrypted && <div className={`mt-2 text-[8px] font-black uppercase inline-block border px-1 ${isDecrypted ? 'bg-emerald-950 text-emerald-400 border-emerald-900' : 'bg-red-950 text-red-400 border-red-900'}`}>{isDecrypted ? 'Handshake Decrypted' : 'Payload Encrypted'}</div>}
+            </div>
+            <button onClick={()=>{ if(currentTrack.isEncrypted && !isDecrypted){alert("DECRYPTION REQUIRED. Inject passkey: DLB_SECURE_2026"); return;} setIsAudioPlaying(!isAudioPlaying); }} className="w-full py-2 bg-white text-black font-black text-xs uppercase tracking-wider">
+              {isAudioPlaying ? "Pause Track Signal" : "Decompress & Play Track"}
+            </button>
+            {currentTrack.isEncrypted && !isDecrypted && (
+              <div className="flex gap-1 mt-2">
+                <input type="password" placeholder="Enter key hash (DLB_SECURE_2026)" value={decryptionKey} onChange={(e)=>setDecryptionKey(e.target.value)} className="flex-1 bg-black border border-neutral-900 p-2 text-white text-[10px]" />
+                <button onClick={()=>{if(decryptionKey==="DLB_SECURE_2026") setIsDecrypted(true); else alert("Invalid hash.");}} className="bg-neutral-900 border border-neutral-800 text-white font-black text-[10px] px-3 uppercase">Verify Cipher</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB PORT: TAKEOVER TV VIDEO CHANNEL */}
+        {activeTab === "TV_STREAMING" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-neutral-950 border border-neutral-900 p-4">
+            <div className="lg:col-span-2 space-y-3">
+              <div className="aspect-video w-full bg-black border border-neutral-900 flex flex-col items-center justify-center text-center p-4">
+                <Monitor className={`w-10 h-10 text-neutral-800 mb-2 ${isVideoPlaying ? 'text-red-500 animate-pulse' : ''}`} />
+                <div className="text-white font-black text-xs uppercase truncate max-w-sm">{activeVideo.title}</div>
+              </div>
+              <button onClick={()=>setIsVideoPlaying(!isVideoPlaying)} className="px-5 py-2 bg-white text-black font-black text-[10px] uppercase">{isVideoPlaying ? "Disconnect Feed" : "Transmit Video Packet"}</button>
+            </div>
+            <div className="space-y-1.5 border-l border-neutral-900 pl-4">
+              <span className="text-[9px] font-black text-neutral-500 uppercase block">Available Video Tapes</span>
+              {MOVIE_TV_CATALOG.map(v => (
+                <div key={v.id} onClick={()=>setActiveVideo(v)} className={`p-2 border cursor-pointer text-[10px] uppercase ${activeVideo.id === v.id ? 'bg-neutral-900 border-neutral-700' : 'bg-black border-neutral-900'}`}>
+                  <div className="text-white font-bold truncate">{v.title}</div>
+                  <div className="text-[8px] text-neutral-500 mt-1">Cost Allocation: ${v.basePrice.toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB PORT: DRIP GALLERIES */}
+        {activeTab === "DRIP_GALLERY" && (
+          <div className="space-y-4">
+            {!hasPaidDripCover ? (
+              <div className="max-w-md mx-auto border border-neutral-900 bg-neutral-950 p-6 text-center space-y-4 shadow-xl">
+                <Palette className="w-10 h-10 text-purple-500 mx-auto" />
+                <h3 className="text-white font-black text-xs uppercase tracking-widest">DRIP Exhibition Cover Entry Intercept</h3>
+                <button onClick={()=>{ if(balances.brandedDebitCard >= 0.50){ setBalances({...balances, brandedDebitCard: balances.brandedDebitCard - 0.50}); setHasPaidDripCover(true); } }} className="w-full py-2.5 bg-purple-600 text-white font-black text-xs uppercase">Settle Standard Entrance Cover Fee ($0.50)</button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+                <div className="lg:col-span-2 border border-neutral-900 bg-neutral-950 p-3">
+                  {selectedDripArt ? <img src={selectedDripArt.url} className="w-full max-h-64 object-contain grayscale" /> : <div className="py-20 text-center text-neutral-600 uppercase">[ Select a canvas array to print ]</div>}
+                </div>
+                <div className="border border-neutral-900 bg-neutral-950 p-3 space-y-2">
+                  <span className="text-[9px] font-black text-neutral-500 uppercase block">Exhibition Manifest</span>
+                  {DRIP_GALLERY_COLLECTION.map(art => (
+                    <div key={art.id} onClick={()=>setSelectedDripArt(art)} className="p-2 bg-black border border-neutral-900 text-[10px] cursor-pointer text-white font-bold uppercase">{art.title}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB PORT: CHOSEN DATING POOL */}
+        {activeTab === "CHOSEN_DATING" && (
+          <div className="max-w-md mx-auto bg-neutral-950 border border-neutral-900 p-4 space-y-4">
+            <h3 className="text-white text-xs font-black uppercase tracking-wider pb-1 border-b border-neutral-900">CHOSEN Dynamic Match Matching Grid</h3>
+            {CHOSEN_PROFILES[chosenIndex] ? (
+              <div className="space-y-3">
+                <div className="bg-black border border-neutral-900 p-2 text-center">
+                  <img src={CHOSEN_PROFILES[chosenIndex].url} className="w-full h-48 object-cover grayscale mb-2" />
+                  <div className="text-white font-black text-xs uppercase">@{CHOSEN_PROFILES[chosenIndex].alias}</div>
+                  <div className="text-[9px] text-neutral-500 font-sans mt-1">{CHOSEN_PROFILES[chosenIndex].matchReason}</div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={()=>{ if(chosenIndex < CHOSEN_PROFILES.length-1) setChosenIndex(prev=>prev+1); else setChosenIndex(0); }} className="px-4 py-2 bg-neutral-900 border border-neutral-800 uppercase text-neutral-400 text-[10px] font-black">Skip</button>
+                  <button onClick={()=>{ const cost = 0.50 + CHOSEN_PROFILES[chosenIndex].premiumFee; if(balances.brandedDebitCard >= cost){ setBalances({...balances, brandedDebitCard: balances.brandedDebitCard - cost}); setActiveChosenChats([...activeChosenChats, CHOSEN_PROFILES[chosenIndex].alias]); } }} className="flex-1 py-2 bg-purple-950 border border-purple-900 text-purple-400 uppercase text-[9px] font-black">Open Encrypted Direct Chat Link</button>
+                </div>
+              </div>
+            ) : <div className="text-center text-neutral-600">[ Cycle Empty ]</div>}
+          </div>
+        )}
+
+        {/* TAB PORT: AMAZON GEAR MARKETPLACE */}
+        {activeTab === "MARKETPLACE" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-neutral-950 border border-neutral-900 p-4">
+            <div className="lg:col-span-2 space-y-2">
+              <span className="text-[9px] font-black text-neutral-500 uppercase block">Available Production Inventory</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {MARKETPLACE_PRODUCTS.map(prod => (
+                  <div key={prod.id} className="bg-black border border-neutral-900 p-3 flex flex-col justify-between gap-2">
+                    <div className="text-white font-black text-xs uppercase">{prod.title}</div>
+                    <div className="flex justify-between items-center text-[10px] font-black"><span className="text-emerald-400">${prod.price.toFixed(2)}</span></div>
+                    <button onClick={()=>setMarketplaceCart([...marketplaceCart, prod])} className="w-full py-1.5 bg-neutral-900 text-[10px] text-white uppercase font-black border border-neutral-800">Add to Settle Basket</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-black border border-neutral-900 p-3 space-y-3">
+              <span className="text-[9px] font-black text-neutral-500 uppercase block">Order Checkout Deck</span>
+              <div className="text-xs font-black text-white">Gross Aggregate Total: ${marketplaceCart.reduce((sum, i)=>sum+i.price, 0).toFixed(2)}</div>
+              <button onClick={()=>{ const tot = marketplaceCart.reduce((sum, i)=>sum+i.price, 0); if(balances.brandedDebitCard >= tot){ setBalances({...balances, brandedDebitCard: balances.brandedDebitCard - tot}); setMarketplaceCart([]); alert("Transaction processed cleanly across multi-rail channels."); } }} className="w-full py-2 bg-white text-black font-black uppercase text-xs">Clear Order Assets Basket</button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB PORT: INTEGRATED SYSTEM CREDIT REPAIR & TRADING SUITE */}
+        {activeTab === "CREDIT_REPAIR" && (
+          <div className="space-y-4">
+            
+            {/* INLINE PUBLIC STOCK MARKET SECTOR */}
+            <div className="bg-neutral-950 border border-neutral-900 p-4 space-y-3">
+              <div className="flex justify-between items-center border-b border-neutral-900 pb-2"><span className="text-xs font-black text-white flex items-center gap-1"><TrendingUp className="w-4 h-4 text-emerald-400" /> WJRF LIQUID MARGIN EXCHANGE BOARD</span></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {marketAssets.map(asset => (
+                  <div key={asset.id} onClick={()=>setActiveAsset(asset)} className={`p-2 border cursor-pointer uppercase ${activeAsset.id === asset.id ? 'bg-neutral-900 border-neutral-700 text-white' : 'bg-black border-neutral-900 text-neutral-400'}`}>
+                    <div className="flex justify-between font-black"><span>${asset.assetTicker}</span><span>${asset.currentValuation.toFixed(2)}</span></div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-black border border-neutral-900 p-3 flex justify-between items-center text-[10px]">
+                <span className="text-white font-black uppercase">Active Focus: ${activeAsset.assetTicker}</span>
+                <div className="flex gap-1">
+                  <button onClick={()=>{ const cost = activeAsset.currentValuation * 10; if(balances.brandedDebitCard >= cost){ setBalances({...balances, brandedDebitCard: balances.brandedDebitCard - cost, stockEquity: balances.stockEquity + cost}); alert("LONG POSITION POSITION INJECTED."); } }} className="px-3 py-1 bg-emerald-950 border border-emerald-900 text-emerald-400 font-black uppercase">Acquire Long Block</button>
+                  <button onClick={()=>{ alert("SHORT CONTRACT INITIATED ON DISPUTED ACCOUNT THRESHOLDS."); }} className="px-3 py-1 bg-red-950 border border-red-900 text-red-400 font-black uppercase">Short Asset Matrix</button>
+                </div>
+              </div>
+            </div>
+
+            {/* INTEGRATED MULTI-OPTION BUNDLE SELECTION GATEWAY */}
+            <div className="max-w-4xl mx-auto bg-neutral-950 border border-neutral-900 p-4">
+              <div className="border-b border-neutral-900 pb-2 mb-3 flex justify-between items-center"><span className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-1.5"><Scale className="w-4 h-4 text-red-500" /> FCRA SYSTEM INTEGRATION MONITOR</span><button onClick={()=>{ setSelectedOptions({ optA: true, optB: true, optC1: true, optC2: true, optC3: true }); setAccounts(accounts.map(a=>({...a, selected: true}))); }} className="px-2 py-0.5 border border-red-900 bg-red-950/40 text-red-400 font-black text-[9px] uppercase">[ SELECT ALL STRATEGIES & ACCOUNTS ]</button></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <span className="text-[9px] font-black text-neutral-500 uppercase block">01. Target Accounts</span>
+                  {accounts.map(acc => (
+                    <div key={acc.id} onClick={()=>setAccounts(accounts.map(a=>a.id===acc.id?{...a, selected:!a.selected}:a))} className={`p-2 border cursor-pointer flex justify-between text-[10px] ${acc.selected ? 'bg-neutral-900 border-neutral-700' : 'bg-black border-neutral-900'}`}>
+                      <span className="text-white font-bold">{acc.collector}</span><span className="text-red-400 font-black">${acc.amount.toFixed(2)}</span>
+                    </div>
+                  ))}
+                  <span className="text-[9px] font-black text-neutral-500 uppercase block">02. Toggle Integration Systems</span>
+                  <div className="space-y-1 text-[9px] bg-black p-2 border border-neutral-900">
+                    <label className="flex items-center gap-2 cursor-pointer text-white font-bold uppercase"><input type="checkbox" checked={selectedOptions.optA} onChange={()=>setSelectedOptions({...selectedOptions, optA: !selectedOptions.optA})} /> Option A: Real-time Status Sync Controller</label>
+                    <label className="flex items-center gap-2 cursor-pointer text-white font-bold uppercase mt-1"><input type="checkbox" checked={selectedOptions.optB} onChange={()=>setSelectedOptions({...selectedOptions, optB: !selectedOptions.optB})} /> Option B: Pay-For-Delete Liquidation Pipeline</label>
+                    <label className="flex items-center gap-2 cursor-pointer text-white font-bold uppercase mt-1"><input type="checkbox" checked={selectedOptions.optC1} onChange={()=>setSelectedOptions({...selectedOptions, optC1: !selectedOptions.optC1})} /> Option C-1: Sec 609 Metric Written Inquiries</label>
+                  </div>
+                  <button onClick={()=>{ setIsProcessingCredit(true); setTimeout(()=>{ setCreditLog(["[⏳ ENGINE INIT] Firing Multi-Strategy Credit Repair Blitz Array...", "[🛡️ SUITE MATCHED] Deployed Section 609 and verification loop parameters directly to clearinghouses.", "[📉 LIQUIDATION WATCH] Portfolio margins updated tracking pending status outcomes.", "[🏁 ENVELOPE SEALED] Compliance package assembled cleanly."]); setAccounts(accounts.map(a=>a.selected?{...a, status:"PROCESSING", selected:false}:a)); setIsProcessingCredit(false); }, 1200); }} className="w-full py-2 bg-white text-black font-black text-xs uppercase">Execute Custom System Selection</button>
+                </div>
+                <div className="bg-black border border-neutral-900 p-3 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <span className="text-[9px] font-black text-neutral-500 uppercase block">Telemetry Monitor Log Output</span>
+                    {creditLog.length === 0 ? <div className="text-neutral-700 py-12 text-center text-[9px] font-bold uppercase">[ Terminal Idle ]</div> : <div className="space-y-1.5 text-[8px] text-neutral-300 font-mono">{creditLog.map((log,i)=><div key={i} className="border-l border-neutral-800 pl-1.5">{log}</div>)}</div>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+      </main>
+
+      {/* SYSTEM CONSTANT DIAGNOSTIC FOOTER STATUS BAR */}
+      <footer className="bg-neutral-950 border-t-2 border-neutral-900 px-6 py-3 text-center text-[9px] text-neutral-600 tracking-tight">
+        WHEREJEWELZRFOUND PLATFORM MODULE DISPATCH PLATFORM INITIALIZED // FULL SANDBOX SANDBOX SYNCED OK
+      </footer>
+
+    </div>
+  );
+}
